@@ -10,17 +10,37 @@ class Form1(Form1Template):
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
+
     
     # Any code you write here will run before the form opens.
     self.gefaengnisse_drop_down.items = anvil.server.call('get_gefaengnisse')
-    self.label_direktor.text = "Direktor TODO" 
-    self.label_freie_zellen.text = "Freie Zellen TODO"
-    self.repeating_zellen.items = [{'zellennummer': 'TODO', 'anzahl_häftlinge': 'TODO'}, 
-                                   {'zellennummer': 'TODO', 'anzahl_häftlinge': 'TODO'}]
+    self.current_gefaengnis_id = self.gefaengnisse_drop_down.selected_value 
+    self.current_freie_zellen = int(anvil.server.call(('get_freie_zellen'), self.current_gefaengnis_id)[0][0])
+    self.current_direktor = str(anvil.server.call(('get_direktor'), self.current_gefaengnis_id)[0][0])
+
+
+    
+    self.label_direktor.text = self.current_direktor 
+    self.label_freie_zellen.text = str(self.current_freie_zellen)
+
+    self.current_zellen_list = anvil.server.call(('get_zellennummer_und_anzahl_haeftlinge'),self.current_gefaengnis_id)
+    self.current_haeftling_anzahl = 0
+    print(self.current_zellen_list)
+    
+    self.repeating_zellen.items = [{'zellennummer': int(self.current_zellen_list[0][0]), 'anzahl_häftlinge': '1'}, 
+                                   {'zellennummer': int(self.current_zellen_list[1][0]), 'anzahl_häftlinge': '2'},
+                                   {'zellennummer': int(self.current_zellen_list[2][0]), 'anzahl_häftlinge': '1'}]
+
+    
 
   def gefaengnisse_drop_down_change(self, **event_args):
     """This method is called when an item is selected"""
-    pass
+    self.current_gefaengnis_id = self.gefaengnisse_drop_down.selected_value 
+
+    self.current_freie_zellen = int(anvil.server.call(('get_freie_zellen'), self.current_gefaengnis_id)[0][0])
+    self.current_direktor = str(anvil.server.call(('get_direktor'), self.current_gefaengnis_id)[0][0])
+    self.label_direktor.text = self.current_direktor 
+    self.label_freie_zellen.text = str(self.current_freie_zellen)
 
  
 
