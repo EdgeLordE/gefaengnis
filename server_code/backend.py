@@ -8,4 +8,8 @@ import sqlite3
 
 @anvil.server.callable
 def get_gefaengnisse():
-  conn = 
+  conn = sqlite3.connect(data_files['gefaengnis.db'])
+  cursor = conn.cursor()
+  res = list(cursor.execute("select * from Gefaengnis"))
+  return res
+  
